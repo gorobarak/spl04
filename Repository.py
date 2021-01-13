@@ -2,6 +2,7 @@ import atexit
 import sqlite3
 
 from DAOs import _Vaccines, _Suppliers, _Clinics, _Logistics
+from DTOs import Vaccine, Supplier, Clinic, Logistic
 
 
 class _Repository:
@@ -53,7 +54,15 @@ class _Repository:
          );
     """)
 
-    def receive_shipment(self,name, amount, date):
+    def receive_shipment(self, name, amount, date):
+        id = self.vaccines.getNextAvaliableId()
+        supplierId = self.suppliers.getId(name)
+        supplierLogisticId = self.suppliers.getLogistic(supplierId)
+        self.vaccines.insert(Vaccine(id, date, supplierId, amount))  # new batch of vaccines
+        self.logistics.updateCountReceived(supplierLogisticId, amount) # update count received for supplier
+
+    def send_shipment(self, location, amount):
+
 
 
 repo = _Repository()
