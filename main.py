@@ -10,9 +10,10 @@ def fixDate(date):
 
 def parseConfig(file):
     with open(file) as configFile:
-        entries = configFile.readline()
+        entries = configFile.readline().split(',')
         # vaccines
-        for i in range(0, entries[0]):
+        print(entries)
+        for i in range(0, int(entries[0])):
             nextline = configFile.readline().split(',')
             date = fixDate(nextline[1].replace('−','-'))
             quantity = int(nextline[3])
@@ -21,13 +22,13 @@ def parseConfig(file):
             repo.inventory += quantity
 
         # suppliers
-        for i in range(0, entries[1]):
+        for i in range(0, int(entries[1])):
             nextline = configFile.readline().split(',')
             supplier = Supplier(int(nextline[0]), nextline[1], int(nextline[2]))
             repo.suppliers.insert(supplier)
 
         # clinics
-        for i in range(0, entries[2]):
+        for i in range(0, int(entries[2])):
             nextline = configFile.readline().split(',')
             demand = int(nextline[2])
             clinic = Clinic(int(nextline[0]), nextline[1], demand, int(nextline[3]))
@@ -35,7 +36,7 @@ def parseConfig(file):
             repo.demand += demand
 
         # logistics
-        for i in range(0, entries[3]):
+        for i in range(0, int(entries[3])):
             nextline = configFile.readline().split(',')
             logistic = Logistic(int(nextline[0]), nextline[1], int(nextline[2]), int(nextline[3]))
             repo.logistics.insert(logistic)
@@ -52,11 +53,11 @@ def executeOrders(orders, output):
                 repo.receive_shipment(*order)
 
             # send shipment
-            else:
+            if len(order) == 2:
                 order[1] = int(order[1])
                 repo.send_shipment(*order)
 
-            outputFile.write(repo.getStatus())
+            outputFile.write(repo.getStatus() + '\n')
 
 
 
