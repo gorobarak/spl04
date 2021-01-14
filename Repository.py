@@ -6,13 +6,19 @@ from DTOs import Vaccine, Supplier, Clinic, Logistic
 
 
 class _Repository:
+
+
     def __init__(self):
-        print("create repo")
         self._conn = sqlite3.connect('database.db')
         self.vaccines = _Vaccines(self._conn)
         self.suppliers = _Suppliers(self._conn)
         self.clinics = _Clinics(self._conn)
         self.logistics = _Logistics(self._conn)
+        self.inventory = 0
+        self.demand = 0
+        self.received = 0
+        self.sent = 0
+
 
     def close(self):
         self._conn.commit()
@@ -59,9 +65,28 @@ class _Repository:
         supplierId = self.suppliers.getId(name)
         supplierLogisticId = self.suppliers.getLogistic(supplierId)
         self.vaccines.insert(Vaccine(id, date, supplierId, amount))  # new batch of vaccines
-        self.logistics.updateCountReceived(supplierLogisticId, amount) # update count received for supplier
+        self.logistics.increaseCountReceived(supplierLogisticId, amount)  # update count received for supplier
+        self.inventory += amount
+        self.received += amount
 
+    # reduce amount from demand in clinic=location
+    # add amount to count_sent of logistic working with clinic
+    # send vaccines oldest first, delete batch if it becomes empty
+    # assume enough vaccines in center
+    #update status
     def send_shipment(self, location, amount):
+        clinicId = self.clinics.getId(location)
+        logisticId = self.clinics.getLogisticId(clinicId)
+        self.clinics.reduceDemand(amount, clinicId)
+        self.logistics.increaseCountSent(amount, logisticId)
+        self.vaccines.sendVaccines(amount)
+        self.inventory -= amount
+        self.sent += amount
+        self.demand -= amount
+
+    def getStatus(self):
+        return str(self.inventory) + ',' + str(self.demand) + ',' + str(self.received) + ',' + str(self.sent)
+
 
 
 
