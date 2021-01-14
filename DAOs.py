@@ -8,6 +8,7 @@ class _Vaccines:
         self._conn.execute("""
                     INSERT INTO vaccines (id, date, supplier, quantity) VALUES (?,?,?,?)
                     """, [vaccine.id, vaccine.date, vaccine.supplier, vaccine.quantity])
+        self.usedIds.add(vaccine.id)
 
     def getNextAvaliableId(self):
         if self.currentId in self.usedIds:
