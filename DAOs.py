@@ -1,7 +1,7 @@
 class _Vaccines:
     def __init__(self, conn):
         self._conn = conn
-        self.currentId = 0
+        self.currentId = 1
         self.usedIds = set()
 
     def insert(self, vaccine):
