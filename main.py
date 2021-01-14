@@ -12,7 +12,6 @@ def parseConfig(file):
     with open(file) as configFile:
         entries = configFile.readline().split(',')
         # vaccines
-        print(entries)
         for i in range(0, int(entries[0])):
             nextline = configFile.readline().split(',')
             date = fixDate(nextline[1].replace('−','-'))

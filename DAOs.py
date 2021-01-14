@@ -83,7 +83,7 @@ class _Logistics:
 
     def insert(self, logistic):
         self._conn.execute("""
-                    INSERT INTO logistics (id, 'name', count_sent, count_received) VALUES (?,?,?,?)
+                    INSERT INTO logistics (id, name, count_sent, count_received) VALUES (?,?,?,?)
                     """, [logistic.id, logistic.name, logistic.count_sent, logistic.count_received])
 
     def increaseCountReceived(self, logisticId, amount):
